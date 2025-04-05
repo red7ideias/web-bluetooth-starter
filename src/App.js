@@ -228,6 +228,89 @@ function App() {
     }
   };
 
+  const testAllServicesAndCharacteristics = async () => {
+    try {
+      const uuids = [
+        "00002a7e-0000-1000-8000-00805f9b34fb",
+        "00002a84-0000-1000-8000-00805f9b34fb",
+        "00002a7f-0000-1000-8000-00805f9b34fb",
+        "00002a80-0000-1000-8000-00805f9b34fb",
+        "00002a5a-0000-1000-8000-00805f9b34fb",
+        "00002a43-0000-1000-8000-00805f9b34fb",
+        "00002a42-0000-1000-8000-00805f9b34fb",
+        "00002a06-0000-1000-8000-00805f9b34fb",
+        "00002a44-0000-1000-8000-00805f9b34fb",
+        "00002a3f-0000-1000-8000-00805f9b34fb",
+        "00002ab3-0000-1000-8000-00805f9b34fb",
+        "00002a81-0000-1000-8000-00805f9b34fb",
+        "00002a82-0000-1000-8000-00805f9b34fb",
+        "00002a83-0000-1000-8000-00805f9b34fb",
+        "00002a58-0000-1000-8000-00805f9b34fb",
+        "00002a73-0000-1000-8000-00805f9b34fb",
+        "00002a72-0000-1000-8000-00805f9b34fb",
+        "00002a01-0000-1000-8000-00805f9b34fb",
+        "00002aa3-0000-1000-8000-00805f9b34fb",
+        "00002a19-0000-1000-8000-00805f9b34fb",
+        "00002a49-0000-1000-8000-00805f9b34fb",
+        "00002a35-0000-1000-8000-00805f9b34fb",
+        "00002a9b-0000-1000-8000-00805f9b34fb",
+        "00002a9c-0000-1000-8000-00805f9b34fb",
+        "00002a38-0000-1000-8000-00805f9b34fb",
+        "00002aa4-0000-1000-8000-00805f9b34fb",
+        "00002aa5-0000-1000-8000-00805f9b34fb",
+        "00002a22-0000-1000-8000-00805f9b34fb",
+        "00002a32-0000-1000-8000-00805f9b34fb",
+        "00002a33-0000-1000-8000-00805f9b34fb",
+        "00002aa6-0000-1000-8000-00805f9b34fb",
+        "00002aa8-0000-1000-8000-00805f9b34fb",
+        "00002aa7-0000-1000-8000-00805f9b34fb",
+        "00002aab-0000-1000-8000-00805f9b34fb",
+        "00002aaa-0000-1000-8000-00805f9b34fb",
+        "00002aac-0000-1000-8000-00805f9b34fb",
+        "00002aa9-0000-1000-8000-00805f9b34fb",
+        "00002a5c-0000-1000-8000-00805f9b34fb",
+        "00002a5b-0000-1000-8000-00805f9b34fb",
+        "00002a2b-0000-1000-8000-00805f9b34fb",
+        "00002a66-0000-1000-8000-00805f9b34fb",
+        "00002a65-0000-1000-8000-00805f9b34fb",
+        "00002a63-0000-1000-8000-00805f9b34fb",
+        "00002a64-0000-1000-8000-00805f9b34fb",
+        "00002a99-0000-1000-8000-00805f9b34fb",
+        "00002a85-0000-1000-8000-00805f9b34fb",
+        "00002a86-0000-1000-8000-00805f9b34fb",
+        "00002a08-0000-1000-8000-00805f9b34fb",
+        "00002a0a-0000-1000-8000-00805f9b34fb",
+        "00002a09-0000-1000-8000-00805f9b34fb",
+        "00002a7d-0000-1000-8000-00805f9b34fb",
+        "00002a00-0000-1000-8000-00805f9b34fb",
+      ];
+
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: uuids,
+      });
+
+      console.log("Device:", device);
+      const server = await device.gatt.connect();
+      console.log("Connected to GATT Server");
+
+      for (const uuid of uuids) {
+        try {
+          const service = await server.getPrimaryService(uuid);
+          console.log(`Service found: ${uuid}`);
+          const characteristics = await service.getCharacteristics();
+          for (const characteristic of characteristics) {
+            console.log(`  Characteristic found: ${characteristic.uuid}`);
+          }
+        } catch (error) {
+          console.log(`Service not found: ${uuid}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const connectToDeviceAndLogServices = async () => {
     try {
       const serviceId = '000002902-0000-1000-8000-00805f9b34fb';
@@ -265,7 +348,7 @@ function App() {
         <button onClick={connectTemperaturaDevice}>Conecte ao dispositivo de temperatura</button>
       }
       {supportsBluetooth && isDisconnected &&
-        <button onClick={connectToDeviceAndLogServices}>Conecte ao dispositivo de pressão</button>
+        <button onClick={testAllServicesAndCharacteristics}>Conecte ao dispositivo ECG</button>
       }
       {supportsBluetooth && isDisconnected &&
         <button onClick={connectGtechService}>Conecte ao dispositivo de glicose</button>
